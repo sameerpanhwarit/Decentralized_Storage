@@ -49,7 +49,6 @@
     <!-- Template Stylesheet -->
     <link href="/static/css/style2.css" rel="stylesheet">
 
-
 </head>
 
 <body>
@@ -67,7 +66,7 @@
                         <li><a href="/dashboard" class="nav-item nav-link active"><span
                                     class="icon-Group-1"></span>Dashboard</a> </li>
                         <li><a href="/cloud" class="nav-item nav-link"><span
-                                    class="icon-Group"></span>Cloud/Drive</a></li>
+                                    class="icon-Group"></span>Drive</a></li>
                         <li><a href="/starred" class="nav-item nav-link"><span
                                     class="icon-Group-3"></span>Starred</a></li>
                         <!--<li> <a href="shared.html" class="nav-item nav-link"><i class="fa-regular fa-star me-2"></i>Shared</a> </li>-->
@@ -94,16 +93,12 @@
                 </a>
                 <h4>Dashboard</h4>
 
-                <form class="d-none d-md-flex ms-4">
-
+                <form action="/search" method="post" class="d-none d-md-flex ms-4">
                     <div class="div-21">
-                        <form method="post">
-                            <input type="text" placeholder="Search..">
+                            <input type="text" placeholder="Search.." name="search_form">
                             <button type="submit">
                                 <img loading="lazy" src="/static/images/search.png" class="img-8" />
                             </button>
-
-                        </form>
                     </div>
                 </form>
                 <div class="navbar-nav align-items-center ms-auto">
@@ -128,101 +123,38 @@
                     <div class="owl-carousel owl-theme">
                         <div class="item an-slides">
                             <div class="an-sl-image">
-                                <img src="/static/images/best-dress-shirts-for-men.jpg" alt="">
+                                <img src="/static/thumbnails/Azure.png" alt="">
                             </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
+                            <a href="javascript:void(0)" class="slide-btn">Azure.mp4</a>
                             <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
+                                <a href="{{ url_for('download', file_hash='QmPCBmcDPDMA2oJMvg5eNe9idH3bpZq8Ysy8LKgqo21TGd') }}" class="hover-slide-btn">Download</a>
                             </div>
                         </div>
                         <div class="item an-slides">
                             <div class="an-sl-image">
-                                <img src="/static/images/best-dress-shirts-for-men.jpg" alt="">
+                                <img src="/static/thumbnails/face.png" alt="">
                             </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
+                            <a href="javascript:void(0)" class="slide-btn">FaceMesh.py - navttc_opencv.mp4</a>
                             <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
+                                <a href="{{ url_for('download', file_hash='QmW9dxwn5WMEV4LQXipMjKmbLGxpdhDxt8cXE5C2HvXNpu') }}" class="hover-slide-btn">Download</a>
                             </div>
                         </div>
                         <div class="item an-slides">
                             <div class="an-sl-image">
-                                <img src="/static/images/download.jpg" alt="">
+                                <img src="/static/thumbnails/zinda.png" alt="">
                             </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
+                            <a href="javascript:void(0)" class="slide-btn">Zinda Banda 4K.mkv</a>
                             <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
+                                <a href="{{ url_for('download', file_hash='QmPiQ6AoBNHipMbzWmwadFMfzmq5h2QuVp5mUQyNQ6bJaj') }}" class="hover-slide-btn">Download</a>
                             </div>
                         </div>
                         <div class="item an-slides">
                             <div class="an-sl-image">
-                                <img src="/static/images/x7j730cvkqeb1.jpg" alt="">
+                                <img src="/static/thumbnails/flutter.svg" alt="">
                             </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
+                            <a href="javascript:void(0)" class="slide-btn">flutter_setup.zip</a>
                             <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                            </div>
-                        </div>
-                        <div class="item an-slides">
-                            <div class="an-sl-image">
-                                <img src="/static/images/best-dress-shirts-for-men.jpg" alt="">
-                            </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                            <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                            </div>
-                        </div>
-                        <div class="item an-slides">
-                            <div class="an-sl-image">
-                                <img src="/static/images/best-dress-shirts-for-men.jpg" alt="">
-                            </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                            <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                            </div>
-                        </div>
-                        <div class="item an-slides">
-                            <div class="an-sl-image">
-                                <img src="/static/images/download.jpg" alt="">
-                            </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                            <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                            </div>
-                        </div>
-                        <div class="item an-slides">
-                            <div class="an-sl-image">
-                                <img src="/static/images/x7j730cvkqeb1.jpg" alt="">
-                            </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                            <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                            </div>
-                        </div>
-                        <div class="item an-slides">
-                            <div class="an-sl-image">
-                                <img src="/static/images/cargo-pants-outfits-men.jpg" alt="">
-                            </div>
-                            <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                            <div class="slide-hov-button-div">
-                                <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
+                                <a href="{{ url_for('download', file_hash='QmNvNuxrU1oGWUdTqTxZsFUAkcvmmoRggbC3CZsf5yKVmX') }}" class="hover-slide-btn">Download</a>
                             </div>
                         </div>
 
@@ -243,7 +175,7 @@
 
                     </div>
 
-                    <div class="col-lg-12 text-center"><input type="submit" value="Upload image" class="upd-btn"></div>
+                    <div class="col-lg-12 text-center"><input type="submit" value="Upload File" class="upd-btn"></div>
                 </form>
 
                 </div>
@@ -253,104 +185,40 @@
                         <div class="owl-carousel owl-theme">
                             <div class="item an-slides">
                                 <div class="an-sl-image">
-                                    <img src="/static/images//cargo-pants-outfits-men.jpg" alt="">
+                                    <img src="/static/thumbnails/choo lo.png" alt="">
                                 </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
+                                <a href="javascript:void(0)" class="slide-btn">The Local Train-Choo Lo.mp4</a>
                                 <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
+                                    <a href="{{ url_for('download', file_hash='QmWkhGSGVwCWcwLo9Uq31gE1zL4xdTHSBypGXmGpPVMEp2') }}" class="hover-slide-btn">Download</a>
                                 </div>
                             </div>
                             <div class="item an-slides">
                                 <div class="an-sl-image">
-                                    <img src="/static/images/best-dress-shirts-for-men.jpg" alt="">
+                                    <img src="/static/thumbnails/android.png" alt="">
                                 </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
+                                <a href="javascript:void(0)" class="slide-btn">android_studio.exe</a>
                                 <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
+                                    <a href="{{ url_for('download', file_hash='QmTQXqaura7uvHHyw7wmJu6KgqY9PbpWFAhSag5ZvHe7rt') }}" class="hover-slide-btn">Download</a>
                                 </div>
                             </div>
                             <div class="item an-slides">
                                 <div class="an-sl-image">
-                                    <img src="/static/images/download.jpg" alt="">
+                                    <img src="/static/thumbnails/Vmware.png" alt="">
                                 </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
+                                <a href="javascript:void(0)" class="slide-btn">VMware_workstation.exe</a>
                                 <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
+                                    <a href="{{ url_for('download', file_hash='QmWT9XHoWXyg6RFxdz2VyE18CV9QRAnyqxUunGA9qoCQoi') }}" class="hover-slide-btn">Download</a>
                                 </div>
                             </div>
                             <div class="item an-slides">
                                 <div class="an-sl-image">
-                                    <img src="/static/images/x7j730cvkqeb1.jpg" alt="">
+                                    <img src="/static/thumbnails/alan_walker.png" alt="">
                                 </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
+                                <a href="javascript:void(0)" class="slide-btn">Alan Walker - Fade.mp4</a>
                                 <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
+                                    <a href="{{ url_for('download', file_hash='QmcKuEdpN7tjsyWpN25wwQSsgYYv9KYkauj4GxLD7Zvior') }}" class="hover-slide-btn">Download</a>
                                 </div>
                             </div>
-                            <div class="item an-slides">
-                                <div class="an-sl-image">
-                                    <img src="/static/images/best-dress-shirts-for-men.jpg" alt="">
-                                </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                                <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                                </div>
-                            </div>
-                            <div class="item an-slides">
-                                <div class="an-sl-image">
-                                    <img src="/static/images/best-dress-shirts-for-men.jpg" alt="">
-                                </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                                <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                                </div>
-                            </div>
-                            <div class="item an-slides">
-                                <div class="an-sl-image">
-                                    <img src="/static/images/download.jpg" alt="">
-                                </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                                <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                                </div>
-                            </div>
-                            <div class="item an-slides">
-                                <div class="an-sl-image">
-                                    <img src="/static/images/x7j730cvkqeb1.jpg" alt="">
-                                </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                                <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                                </div>
-                            </div>
-                            <div class="item an-slides">
-                                <div class="an-sl-image">
-                                    <img src="/static/images/best-dress-shirts-for-men.jpg" alt="">
-                                </div>
-                                <a href="javascript:void(0)" class="slide-btn">BodyBuilder.JPEG</a>
-                                <div class="slide-hov-button-div">
-                                    <a href="javascript:void(0)" class="hover-slide-btn">View</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Edit</a>
-                                    <a href="javascript:void(0)" class="hover-slide-btn">Delete</a>
-                                </div>
-                            </div>
-    
                         </div>
                     </div>
                 </div>
@@ -374,18 +242,13 @@
                         <div class="div-3"><b>{{username}}</b></div>
                         <a href="#/" id="screen_dot"></a>
                     </div>
-                    <div class="div-4">
-                        <div class="div-5">Storage</div>
-                        <div class="div-6">75GB/100GB</div>
-
-                    </div>
                     <div class="wrapper img-3">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
                             <title>elipse</title>
                             <circle id="bg-circle" cx="90" cy="90" r="80" />
                             <circle id="fg-circle" cx="90" cy="90" r="80" />
                         </svg>
-                        <h3>75%</h3>
+                        <h3>{{storage_percentage}}</h3>
                         <p>Used</p>
                     </div>
                     <div class="div-7">File Type</div>
@@ -441,6 +304,8 @@
 
                     <div class="screen-data my-2">
                         <div class="s-data">
+                            <form action="/filter_images" method="post">
+                                <button type="submit">
                            <a href="javascript:void(0)" class="screen-icon">
                             <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                              width="20.000000pt" height="20.000000pt" viewBox="0 0 512.000000 512.000000"
@@ -462,10 +327,14 @@
                             </g>
                             </svg>
                             </a>
+                        </button>
+                            </form>
                             <h6>Images</h6>
-                            <span class="storage">15 gb</span>
+                            <!-- <span class="storage">15 gb</span> -->
                         </div>
                         <div class="s-data">
+                            <form action="/filter_videos" method="post">
+                            <button type="submit">
                             <a href="javascript:void(0)" class="screen-icon">
                                 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                                 width="20.000000pt" height="20.000000pt" viewBox="0 0 512.000000 512.000000"
@@ -486,12 +355,16 @@
                                </g>
                                </svg>
                                 </a>
+                            </button>
+                            </form>
                                 <h6>Video</h6>
-                                <span class="storage">21 gb</span>
+                                <!-- <span class="storage">21 gb</span> -->
                         </div>
                     </div>
                     <div class="screen-data my-2">
                         <div class="s-data">
+                            <form action="/filter_documents" method="post">
+                                <button type="submit">
                            <a href="javascript:void(0)" class="screen-icon">
                             <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                             width="20.000000pt" height="20.000000pt" viewBox="0 0 512.000000 512.000000"
@@ -525,10 +398,14 @@
                            </svg>
                            
                             </a>
-                            <h6>Doucemnt</h6>
-                            <span class="storage">25 gb</span>
+                            </button>
+                        </form>
+                            <h6>Document</h6>
+                            <!-- <span class="storage">25 gb</span> -->
                         </div>
                         <div class="s-data">
+                            <form action="/filter_others" method="post">
+                                <button type="submit">
                             <a href="javascript:void(0)" class="screen-icon">
                                 <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
                                 width="20.000000pt" height="20.000000pt" viewBox="0 0 512.000000 512.000000"
@@ -553,8 +430,10 @@
                                </g>
                                </svg>
                                 </a>
+                            </button>
+                            </form>
                                 <h6>Other</h6>
-                                <span class="storage">14 gb</span>
+                                <!-- <span class="storage">14 gb</span> -->
                         </div>
                     </div>
                     <form action="/logout" method="post">

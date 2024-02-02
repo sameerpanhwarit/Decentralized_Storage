@@ -75,10 +75,10 @@
             <p class="ver-message">We Have Send the OTP on <b>{{ email }}</b></p>
             <form action="/verify", method="post">
             <div class="otp-inp-div">
-              <input type="text" class="otp-inp" maxlength="1" name="n1" id="">
-              <input type="text" class="otp-inp" maxlength="1" name="n2" id="">
-              <input type="text" class="otp-inp" maxlength="1" name="n3" id="">
-              <input type="text" class="otp-inp" maxlength="1" name="n4" id="">
+              <input type="text" class="otp-inp" maxlength="1" name="n1" id="n2" oninput="moveToNext(this)">
+              <input type="text" class="otp-inp" maxlength="1" name="n2" id="n2" oninput="moveToNext(this)" >
+              <input type="text" class="otp-inp" maxlength="1" name="n3" id="n3" oninput="moveToNext(this)">
+              <input type="text" class="otp-inp" maxlength="1" name="n4" id="n4">
             </div>
       
             <div class="login-opt mt-2 gap-2 align-items-center">
@@ -203,6 +203,23 @@
       </div>
     </div>
   </footer>
+
+
+  <script>
+    function moveToNext(input) {
+        var maxLength = parseInt(input.getAttribute("maxlength"));
+        var currentLength = input.value.length;
+
+        if (currentLength >= maxLength) {
+            var nextInput = input.nextElementSibling;
+
+            // Check if there is a next input field
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+    }
+</script>
 </body>
 
 </html>

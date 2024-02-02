@@ -6,19 +6,22 @@ from email.mime.multipart import MIMEMultipart
 from encrypt import hash_password,check_password
 from gen_otp import generateOTP
 from functools import wraps
-import ipfshttpclient
+import  ipfshttpclient 
+from ipfshttpclient import connect
 from Encrypt_data import encrypt, decrypt
+from werkzeug.utils import secure_filename
 import datetime
+import tempfile
 from io import BytesIO
-
+from hashPass import hash_password, check_password
+# from test import get_online_node
 
 app = Flask(__name__)
+
 app.secret_key = 'sameerpanhwar112'
 
-static_aes_key = b'ThisIsAStaticKey32Bytes123456789'
-static_nonce = b'sameerpanhwar_nonce'
 
-client = ipfshttpclient.connect('/ip4/127.0.0.1/tcp/5001')
+ipfs_nodes = ['/ip4/127.0.0.1/tcp/5001','/ip4/192.168.75.131/tcp/5001','/ip4/192.168.100.2/tcp/5001','/ip4/192.168.109.1/tcp/5001']
 
 db = mysql.connector.connect(
     host="localhost",
@@ -28,6 +31,27 @@ db = mysql.connector.connect(
 )
 cursor = db.cursor()
 
+
+def online_node():
+    for node in ipfs_nodes:
+        try:
+            client = connect(node)
+            return client
+        except Exception:
+            print("Cannot Connect with Node:", node)
+
+
+def unpin_and_remove(hash):
+    for node in ipfs_nodes:
+        try:
+            client2 = connect(node)
+            client2.pin.rm(hash)
+            client2.repo.gc()
+            print(f"Removed from Node: {node}")
+        except:
+            print(f"Node is offline {node}")
+
+
 def login_required_and_verified(route_func):
     @wraps(route_func)
     def decorated_route(*args, **kwargs):
@@ -36,7 +60,9 @@ def login_required_and_verified(route_func):
             cursor.execute('SELECT verified FROM users WHERE userid = %s', (user_id,))
             result = cursor.fetchone()
 
+
             if result is not None and result[0]:  # User exists and is verified
+
                 return route_func(*args, **kwargs)
             else:
                 flash('Please verify your account', 'error')
@@ -82,7 +108,8 @@ def signup():
         last = data.get('last')
         email = data.get('email')
         password = data.get('password')
-        # password = hash_password(password)
+        password = hash_password(password)
+        print(email, password)
         username = first.capitalize()+ " "+last.capitalize()
         try:
             cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
@@ -122,7 +149,10 @@ def signup():
 def verifyUser(user_id, entered_otp):
     cursor.execute('SELECT id FROM otp_table WHERE id = %s AND otp_code = %s', (user_id, entered_otp))
     result = cursor.fetchone()
-    return result is not None
+    if result is not None:
+        return result is not None
+    else:
+        return render_template('verification.html')
 
 #verification route
 @app.route("/verify", methods=['GET','POST'])
@@ -161,17 +191,16 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
-        # password = password.encode('utf-8')
         try:
             cursor.execute('SELECT * FROM users WHERE email = %s', (email,))
             existing_user = cursor.fetchone()
             
             if existing_user:
-                print(existing_user)
                 storedPassword = existing_user[3]
                 session['user_id'] = existing_user[0]
-                print(storedPassword)
-                if password == storedPassword:
+                session['username']=existing_user[1]
+                session['email']=existing_user[2]
+                if check_password(storedPassword, password):
                     return redirect('dashboard')
                 else:
                     flash('Incorrect password', 'error')
@@ -188,7 +217,7 @@ def login():
         return render_template('login.html')
 
 #logout route
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['POST','GET'])
 def logout():
     session.pop('user_id', None)
     return redirect(url_for('index'))
@@ -199,47 +228,11 @@ def logout():
 @login_required_and_verified
 def dashboard():
     user_id = session['user_id']
-    cursor.execute('SELECT username FROM users WHERE userid = %s', (user_id,))
-    existing_user = cursor.fetchone()
-    username = existing_user[0]
-
-    return render_template("dashboard.html", username=username)
-
-
-# @app.route('/upload', methods=['POST'])
-# @login_required_and_verified
-# def upload():
-#     if 'uploadfile' in request.files:
-#         file = request.files['uploadfile']
-#         if file.filename != '':
-#             file_name = file.filename
-#             file_type = file.content_type
-#             file_type = file_type.split("/")[-1]
-#             file_content = file.read()
-
-#             file_size_mb = len(file_content) / (1024 * 1024)
-#             current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#             user_id = session["user_id"]
-#             print(f"File name: {file_name}, Size: {file_size_mb} MB, Date: {current_date}, Type: {file_type}")
-#             file_stream = BytesIO(file_content)
-
- 
-#             file.seek(0)
-
-#             try:
-#                 response = client.add(file_stream)
-#                 hash = response['Hash']
-
-
-#                 insert_query = "INSERT INTO files (fileid,filename, filehash, filetype, filesize,date) VALUES (%s, %s, %s, %s, %s, %s)"
-#                 data = (user_id, file_name, hash, file_type, file_size_mb,current_date)
-#                 cursor.execute(insert_query, data)
-#                 db.commit()
-#                 print(f"File uploaded Successfully - {hash}")
-#                 return redirect('dashboard')
-#             except Exception as e:
-#                 print(e)
-#     return redirect('dashboard')
+    storage_size,storage_percentage = get_storage_info(user_id)
+    print(storage_percentage)
+    print(storage_size)
+    username = session['username']
+    return render_template("dashboard.html", username=username, storage_percentage=storage_percentage)
 
 
 @app.route('/upload', methods=['POST'])
@@ -256,11 +249,13 @@ def upload():
             file_size_mb = len(file_content) / (1024 * 1024)
             current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             user_id = session["user_id"]
+            email = session["email"]
             print(f"File name: {file_name}, Size: {file_size_mb} MB, Date: {current_date}, Type: {file_type}")
             file.seek(0)
 
             try:
-                file_stream = encrypt(file_content)
+                file_stream = encrypt(file_content, email)
+                client = online_node()
                 response = client.add(file_stream)
                 hash = response['Hash']
 
@@ -275,7 +270,6 @@ def upload():
                 print(e)
     return redirect('dashboard')
 
-
 @app.route('/cloud', methods=['GET', 'POST'])
 @login_required_and_verified
 def cloud():
@@ -283,17 +277,16 @@ def cloud():
         try:
             user_id = session["user_id"]
 
-            # Retrieve files of currently logged-in user a JOIN
             select_query = "SELECT files.* FROM files JOIN users ON files.fileid = users.userid WHERE files.fileid = %s AND files.deleted = 0"
             cursor.execute(select_query, (user_id,))
             files = cursor.fetchall()
             print(files)
-
+            storage_size,storage_percentage = get_storage_info(user_id)
             cursor.execute('SELECT username FROM users WHERE userid = %s', (user_id,))
             existing_user = cursor.fetchone()
             username = existing_user[0]
 
-            return render_template('cloud.html', files=files, username=username)
+            return render_template('cloud.html', files=files, username=username, storage_percentage= storage_percentage)
         except Exception as e:
             print(e)
 
@@ -335,7 +328,7 @@ def delete(file_hash):
 @login_required_and_verified
 def permanent_delete(file_hash):
     try:
-        print(file_hash)
+        unpin_and_remove(hash)
         delete_query = "DELETE FROM trash WHERE file_hash = %s"
         cursor.execute(delete_query, (file_hash,))
         db.commit()
@@ -350,49 +343,6 @@ def permanent_delete(file_hash):
         print(e)
         return redirect(url_for('dashboard'))
     
-# @app.route('/download/<file_hash>', methods=['GET'])
-# @login_required_and_verified
-# def download(file_hash):
-#     try:
-#         select_query = "SELECT * FROM files WHERE filehash = %s"
-#         cursor.execute(select_query, (file_hash,))
-#         file_details = cursor.fetchone()
-
-#         if file_details:
-#             ipfs_hash = file_details[3]
-#             try:
-#                 response = client.cat(ipfs_hash)
-#             except Exception as ipfs_error:
-#                 print(f"IPFS Connection Error: {ipfs_error}")
-#                 abort(500, "IPFS Internal Server Error")
-
-#             if response:
-#                 real_name = file_details[2]
-#                 file_type = file_details[4]
-#                 file_extension = file_type
-
-#                 temp_file_path = os.path.join(f'{real_name}')
-#                 with open(temp_file_path, 'wb') as temp_file:
-#                     temp_file.write(response)
-
-#                 headers = {
-#                     'Content-Disposition': f'attachment; filename={real_name}.{file_extension}'
-#                 }
-
-#                 return send_file(
-#                     temp_file_path,
-#                     as_attachment=True,
-#                     download_name=real_name,
-#                     mimetype=file_type,
-#                 )
-#             else:
-#                 abort(404, "File not found on IPFS")
-#         else:
-#             abort(404, "File details not found in the database")
-#     except Exception as e:
-#         print(f"Internal Server Error: {e}")
-#         abort(500, "Internal Server Error")
-
 
 @app.route('/download/<file_hash>', methods=['GET'])
 @login_required_and_verified
@@ -405,33 +355,37 @@ def download(file_hash):
         if file_details:
             ipfs_hash = file_details[3]
             try:
+                email = session.get('email')  # Use session.get() to avoid KeyError
+                client = online_node()
                 response = client.cat(ipfs_hash)
-                decrypt_file = decrypt(response)
+
+                if response is not None:
+                    decrypt_file = decrypt(response, email)
+
+                    real_name = file_details[2]
+                    file_type = file_details[4]
+                    file_extension = file_type
+
+                    # temp_file_path = os.path.join(f'{real_name}')
+                    temp_file_path = os.path.join(tempfile.gettempdir(), f'{real_name}.{file_extension}')
+                    with open(temp_file_path, 'wb') as temp_file:
+                        temp_file.write(decrypt_file)
+
+                    headers = {
+                        'Content-Disposition': f'attachment; filename={real_name}.{file_extension}'
+                    }
+
+                    return send_file(
+                        temp_file_path,
+                        as_attachment=True,
+                        download_name=real_name,
+                        mimetype=file_type,
+                    )
+                else:
+                    abort(404, "File not found on IPFS")
             except Exception as ipfs_error:
                 print(f"IPFS Connection Error: {ipfs_error}")
                 abort(500, "IPFS Internal Server Error")
-
-            if response:
-                real_name = file_details[2]
-                file_type = file_details[4]
-                file_extension = file_type
-
-                temp_file_path = os.path.join(f'{real_name}')
-                with open(temp_file_path, 'wb') as temp_file:
-                    temp_file.write(decrypt_file)
-
-                headers = {
-                    'Content-Disposition': f'attachment; filename={real_name}.{file_extension}'
-                }
-
-                return send_file(
-                    temp_file_path,
-                    as_attachment=True,
-                    download_name=real_name,
-                    mimetype=file_type,
-                )
-            else:
-                abort(404, "File not found on IPFS")
         else:
             abort(404, "File details not found in the database")
     except Exception as e:
@@ -470,8 +424,9 @@ def starred():
     """
     cursor.execute(select_query, (user_id,))
     files = cursor.fetchall()
-    username = files[0][-1] if files else None
-    return render_template('star.html', files=files, username=username)
+    storage_size,storage_percentage = get_storage_info(user_id)
+    username= session['username']
+    return render_template('star.html', files=files, username=username,storage_percentage=storage_percentage)
 
     
 
@@ -491,8 +446,10 @@ def trash():
     cursor.execute(select_query, (user_id,))
     files = cursor.fetchall()
     print("Trash files", files)
-    username = files[0][-1] if files else None
-    return render_template('trash.html', files=files, username=username)
+    # username = files[0][-1] if files else None
+    storage_size,storage_percentage = get_storage_info(user_id)
+    username= session['username']
+    return render_template('trash.html', files=files, username=username, storage_percentage=storage_percentage)
 
 
 @app.route('/restore/<file_hash>', methods=['GET'])
@@ -512,6 +469,95 @@ def restore(file_hash):
         print(e)
         return redirect(url_for('dashboard'))
     
+@app.route('/filter_images', methods=['POST'])
+@login_required_and_verified
+def filter_images():
+    try:
+        user_id = session['user_id']
+        get_images_query = "SELECT * FROM files WHERE fileid = %s AND filetype IN ('png', 'jpg', 'jpeg')  AND deleted = 0"
+        cursor.execute(get_images_query, (user_id,))
+        image_files = cursor.fetchall()
+        storage_size,storage_percentage = get_storage_info(user_id)
+        username= session['username']
+
+        return render_template('cloud.html', files=image_files, storage_percentage=storage_percentage, username=username)
+    
+
+    except Exception:
+        print(Exception)
+        
+        
+@app.route('/filter_videos', methods=["POST"])
+@login_required_and_verified
+def filter_videos():
+    try:
+        user_id = session['user_id']
+        get_images_query = "SELECT * FROM files WHERE fileid = %s AND filetype IN ('mkv', 'mp4', 'mov')  AND deleted = 0"
+        cursor.execute(get_images_query, (user_id,))
+        image_files = cursor.fetchall()
+        storage_size,storage_percentage = get_storage_info(user_id)
+        username= session['username']
+
+        return render_template('cloud.html', files=image_files, storage_percentage=storage_percentage, username=username)
+
+    except Exception:
+        print(Exception)
+
+@app.route('/filter_documents', methods=["POST"])
+@login_required_and_verified
+def filter_documents():
+    try:
+        user_id = session['user_id']
+        get_images_query = "SELECT * FROM files WHERE fileid = %s AND filetype IN ('pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx')  AND deleted = 0"
+        cursor.execute(get_images_query, (user_id,))
+        image_files = cursor.fetchall()
+        storage_size,storage_percentage = get_storage_info(user_id)
+        username= session['username']
+
+        return render_template('cloud.html', files=image_files, storage_percentage=storage_percentage, username=username)
+
+    except Exception:
+        print(Exception)
+
+@app.route('/filter_others', methods=["POST"])
+@login_required_and_verified
+def filter_others():
+    try:
+        user_id = session['user_id']
+        get_images_query = "SELECT * FROM files WHERE fileid = %s AND filetype NOT IN ('png', 'jpg', 'jpeg','mkv', 'mp4', 'mov','pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx')  AND deleted = 0"
+        cursor.execute(get_images_query, (user_id,))
+        image_files = cursor.fetchall()
+        storage_size,storage_percentage = get_storage_info(user_id)
+        username= session['username']
+        return render_template('cloud.html', files=image_files, storage_percentage=storage_percentage, username= username)
+
+    except Exception:
+        print(Exception)
+
+@app.route('/search', methods=['POST','GET'])
+@login_required_and_verified
+def search():
+    if request.method == 'POST':
+        user_id = session['user_id']
+        search_query = request.form['search_form']
+        print(search_query)
+        cursor.execute("SELECT * FROM files WHERE filename LIKE %s AND fileid = %s AND deleted = 0",
+                    ('%' + search_query + '%', user_id))
+        results = cursor.fetchall()
+        storage_size,storage_percentage = get_storage_info(user_id)
+        username= session['username']
+        return render_template('cloud.html', files= results, username= username, storage_percentage=storage_percentage)
+    return render_template('dashboard.html')
+
+def get_storage_info(user_id):
+    cursor.execute("SELECT SUM(filesize) FROM files WHERE fileid = %s", (user_id,))
+    total_size_mb = cursor.fetchone()[0] or 0  
+
+    total_limit_gb = 5
+    total_limit_mb = total_limit_gb * 1024
+    storage_percentage = round((total_size_mb / total_limit_mb) * 100, 1)
+
+    return total_size_mb, storage_percentage
 
 if __name__ == '__main__':
     app.run(debug=True)

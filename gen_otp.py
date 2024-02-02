@@ -13,7 +13,7 @@ def generateOTP(email):
     recipient_email = email
 
     subject = "Verification Code"
-    message = f"Your DCloud verification code is: {verification_code}"
+    message = f"Your  verification code is: {verification_code}"
 
     msg = MIMEMultipart()
     msg['From'] = sender_email
