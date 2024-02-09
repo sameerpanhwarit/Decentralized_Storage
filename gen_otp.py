@@ -7,8 +7,8 @@ def generateOTP(email):
 
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
-    sender_email = "anonymous2392000@gmail.com"
-    sender_password = "jeqs zdxs icjb azqf"
+    sender_email = "sender_email_here"
+    sender_password = "send_pass_security_key_here"
 
     recipient_email = email
 
